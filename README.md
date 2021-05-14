@@ -6,6 +6,12 @@ This REST API is built on the following assumptions:
 * the employee id provided in the request is a valid document id used to create an employee document in the employee database.
   e.g. employee document id "f03b0dfeefcdfd0f55db95820e4f55a1"
 
+The application.properties file should have the following properties set:
+* cloudant.url
+* cloudant.username
+* cloudant.password
+* pa_dbname=performance_appraisal
+
 The following requests are supported where the id is the employee id:
 * `GET` /getPerfAppraisalByEmployeeId/{id}
 * `POST` /savePerfAppraisal
