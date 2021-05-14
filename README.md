@@ -50,7 +50,7 @@ Sample responses for the `getPerfAppraisalByEmployeeId` request:
     "revision": null,
     "attachments": null,
     "deleted": false,
-    "empId": "Employee Id Not Available",
+    "empId": "No performance appraisal was found for employee id",
     "rating": "N/A",
     "feedback": "N/A"
 }
