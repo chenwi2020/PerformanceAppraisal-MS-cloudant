@@ -33,7 +33,7 @@ public class PerfAppraisalService {
 		List<PerfAppraisalDoc> perfAppraisalDocList = results.getDocs();
 		if (perfAppraisalDocList == null) {
 			System.out.println("No PA documents found");
-			return new PerfAppraisalDoc("Employee Id Not Available","N/A","N/A");
+			return new PerfAppraisalDoc("No performance appraisal was found for employee id","N/A","N/A");
 		}
 		else if (perfAppraisalDocList.size() == 1) {
 			System.out.println("PA document returned: "+perfAppraisalDocList.get(0));
@@ -41,7 +41,7 @@ public class PerfAppraisalService {
 		}
 		else {
 			System.out.println("ERROR: " +  perfAppraisalDocList.size() + " documents were returned");
-			return new PerfAppraisalDoc("Employee Id Not Available","N/A","N/A");
+			return new PerfAppraisalDoc("No performance appraisal was found for employee id","N/A","N/A");
 		}
 	}
 	
@@ -50,6 +50,10 @@ public class PerfAppraisalService {
     	System.out.println("savePerfAppraisal");
     	String responseMsg = "";
     	System.out.println("Received perfAppraisalDoc: "+perfAppraisalDoc.toString());
+    	if ((perfAppraisalDoc.getEmpId() == null) || ("".equals(perfAppraisalDoc.getEmpId()))) {
+    		System.out.println("Employee id was not provided in the request");
+    		return "FAILURE|Employee id was not provided in the request";
+    	}
     	// Check if performance appraisal already exists for employee id
     	Expression exp = Expression.eq("empId", perfAppraisalDoc.getEmpId());
 		//String qb = new QueryBuilder(exp).build();
@@ -85,6 +89,10 @@ public class PerfAppraisalService {
     	System.out.println("Received perfAppraisalDoc: "+perfAppraisalDoc.toString());
     	String responseMsg = "";
     	pa_db = client.database(pa_dbname, false);
+    	if ((perfAppraisalDoc.getEmpId() == null) || ("".equals(perfAppraisalDoc.getEmpId()))) {
+    		System.out.println("Employee id was not provided in the request");
+    		return "FAILURE|Employee id was not provided in the request";
+    	}
     	// Query to get _id and _rev value
     	Expression exp = Expression.eq("empId", perfAppraisalDoc.getEmpId());
 		//String qb = new QueryBuilder(exp).build();
@@ -93,15 +101,15 @@ public class PerfAppraisalService {
 		List<PerfAppraisalDoc> perfAppraisalDocList = results.getDocs();
 		if (perfAppraisalDocList == null) {
 			System.out.println("No PA documents found");
-			responseMsg += "FAILURE|No performance appraisal waas found for employee id";
+			responseMsg = "FAILURE|No performance appraisal was found for employee id";
 		}
 		else if (perfAppraisalDocList.size() == 0) {
 			System.out.println("ERROR: 0 documents were returned");
-			responseMsg += "FAILURE|No performance appraisal was found for employee id";
+			responseMsg = "FAILURE|No performance appraisal was found for employee id";
 		}
 		else if (perfAppraisalDocList.size() != 1) {
 			System.out.println("ERROR: " +  perfAppraisalDocList.size() + " documents were returned");
-			responseMsg += "FAILURE|Multiple performance appraisals were found for employee id";
+			responseMsg = "FAILURE|Multiple performance appraisals were found for employee id";
 		}
 		else { //if (perfAppraisalDocList.size() == 1)
 			System.out.println("PA document returned: "+perfAppraisalDocList.get(0));
@@ -130,15 +138,15 @@ public class PerfAppraisalService {
 		List<PerfAppraisalDoc> perfAppraisalDocList = results.getDocs();
 		if (perfAppraisalDocList == null) {
 			System.out.println("No PA documents found for employee id");
-			responseMsg += "FAILURE|No performance appraisal was found for employee id";
+			responseMsg = "FAILURE|No performance appraisal was found for employee id";
 		}
 		else if (perfAppraisalDocList.size() == 0) {
 			System.out.println("ERROR: 0 documents were returned");
-			responseMsg += "FAILURE|No performance appraisal was found for employee id";
+			responseMsg = "FAILURE|No performance appraisal was found for employee id";
 		}
 		else if (perfAppraisalDocList.size() != 1) {
 			System.out.println("ERROR: " +  perfAppraisalDocList.size() + " documents were returned");
-			responseMsg += "FAILURE|Multiple performance appraisals were found for employee id";
+			responseMsg = "FAILURE|Multiple performance appraisals were found for employee id";
 		}
 		else { 
 			System.out.println("PA document returned: "+perfAppraisalDocList.get(0));
