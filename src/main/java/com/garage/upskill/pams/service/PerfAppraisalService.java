@@ -1,6 +1,8 @@
 package com.garage.upskill.pams.service;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -46,13 +48,16 @@ public class PerfAppraisalService {
 	}
 	
 	// create performance appraisal for employee id
-    public String savePerfAppraisal(PerfAppraisalDoc perfAppraisalDoc) {
-    	System.out.println("savePerfAppraisal");
-    	String responseMsg = "";
+    public Map<String, String> createPerfAppraisal(PerfAppraisalDoc perfAppraisalDoc) {
+    	System.out.println("createPerfAppraisal");
     	System.out.println("Received perfAppraisalDoc: "+perfAppraisalDoc.toString());
+    	Map<String, String> responseMsg = new HashMap<String, String>();
+    	pa_db = client.database(pa_dbname, false);	
     	if ((perfAppraisalDoc.getEmpId() == null) || ("".equals(perfAppraisalDoc.getEmpId()))) {
     		System.out.println("Employee id was not provided in the request");
-    		return "FAILURE|Employee id was not provided in the request";
+    		responseMsg.put("status", "FAILURE");
+        	responseMsg.put("message", "Employee id was not provided in the request");
+        	return responseMsg;
     	}
     	// Check if performance appraisal already exists for employee id
     	Expression exp = Expression.eq("empId", perfAppraisalDoc.getEmpId());
@@ -65,33 +70,38 @@ public class PerfAppraisalService {
 		catch (NullPointerException e) {
 			System.out.println("NullPointerException caught - no performance appraisal exists for employee id");
 		}
-		if (results == null) {
+		if (results.getDocs().size() == 0) {
 			try {
 				pa_db = client.database(pa_dbname, false);
 				Response response = pa_db.save(perfAppraisalDoc);
 				System.out.println("response PA _id: "+ response.getId());
 				System.out.println("response _rev: "+ response.getRev());
-				responseMsg = "SUCCESS";
+	    		responseMsg.put("status", "SUCCESS");
 			}
 			catch (Exception e) {
-				responseMsg = "FALIURE|" + e.getMessage();
+	    		responseMsg.put("status", "FAILURE");
+	        	responseMsg.put("message", e.getMessage());
 			}
 		}
 		else {
-			responseMsg = "FALIURE|Performance appraisal already exists for employee id";
+    		responseMsg.put("status", "FAILURE");
+        	responseMsg.put("message", "Performance appraisal already exists for employee id");
 		}
 		return responseMsg;
     }
     
     // update performance appraisal for employee id
-    public String updatePerfAppraisal(PerfAppraisalDoc perfAppraisalDoc) {
+    public Map<String, String> updatePerfAppraisal(PerfAppraisalDoc perfAppraisalDoc) {
     	System.out.println("updatePerfAppraisal");
     	System.out.println("Received perfAppraisalDoc: "+perfAppraisalDoc.toString());
-    	String responseMsg = "";
+    	Map<String, String> responseMsg = new HashMap<String, String>();
     	pa_db = client.database(pa_dbname, false);
     	if ((perfAppraisalDoc.getEmpId() == null) || ("".equals(perfAppraisalDoc.getEmpId()))) {
     		System.out.println("Employee id was not provided in the request");
-    		return "FAILURE|Employee id was not provided in the request";
+    		responseMsg.put("status", "FAILURE");
+        	responseMsg.put("message", "Employee id was not provided in the request");
+        	return responseMsg;
+    		//return "FAILURE|Employee id was not provided in the request";
     	}
     	// Query to get _id and _rev value
     	Expression exp = Expression.eq("empId", perfAppraisalDoc.getEmpId());
@@ -101,15 +111,21 @@ public class PerfAppraisalService {
 		List<PerfAppraisalDoc> perfAppraisalDocList = results.getDocs();
 		if (perfAppraisalDocList == null) {
 			System.out.println("No PA documents found");
-			responseMsg = "FAILURE|No performance appraisal was found for employee id";
+    		responseMsg.put("status", "FAILURE");
+        	responseMsg.put("message", "No performance appraisal was found for employee id");
+        	//return responseMsg;
+			//responseMsg = "FAILURE|No performance appraisal was found for employee id";
 		}
 		else if (perfAppraisalDocList.size() == 0) {
 			System.out.println("ERROR: 0 documents were returned");
-			responseMsg = "FAILURE|No performance appraisal was found for employee id";
+    		responseMsg.put("status", "FAILURE");
+        	responseMsg.put("message", "No performance appraisal was found for employee id");
+			//responseMsg = "FAILURE|No performance appraisal was found for employee id";
 		}
 		else if (perfAppraisalDocList.size() != 1) {
 			System.out.println("ERROR: " +  perfAppraisalDocList.size() + " documents were returned");
-			responseMsg = "FAILURE|Multiple performance appraisals were found for employee id";
+    		responseMsg.put("status", "FAILURE");
+        	responseMsg.put("message", "Multiple performance appraisals were found for employee id");
 		}
 		else { //if (perfAppraisalDocList.size() == 1)
 			System.out.println("PA document returned: "+perfAppraisalDocList.get(0));
@@ -120,15 +136,16 @@ public class PerfAppraisalService {
 			Response response = pa_db.update(perfAppraisalDoc);
 			System.out.println("response PA _id: "+ response.getId());
 			System.out.println("response _rev: "+ response.getRev());
-			responseMsg = "SUCCESS";
+			responseMsg.put("status", "SUCCESS");
+			//responseMsg = "SUCCESS";
     	}
 		return responseMsg;
     }
     
     // delete performance appraisal for employee id
-    public String deletePerfAppraisalByEmployeeId(String empid) {
+    public Map<String, String> deletePerfAppraisalByEmployeeId(String empid) {
     	System.out.println("deletePerfAppraisalByEmployeeId");
-    	String responseMsg = "";
+    	Map<String, String> responseMsg = new HashMap<String, String>();
     	pa_db = client.database(pa_dbname, false);
     	// Query to get _id and _rev value
     	Expression exp = Expression.eq("empId", empid);
@@ -138,15 +155,18 @@ public class PerfAppraisalService {
 		List<PerfAppraisalDoc> perfAppraisalDocList = results.getDocs();
 		if (perfAppraisalDocList == null) {
 			System.out.println("No PA documents found for employee id");
-			responseMsg = "FAILURE|No performance appraisal was found for employee id";
+			responseMsg.put("status", "FAILURE");
+        	responseMsg.put("message", "No performance appraisal was found for employee id");
 		}
 		else if (perfAppraisalDocList.size() == 0) {
 			System.out.println("ERROR: 0 documents were returned");
-			responseMsg = "FAILURE|No performance appraisal was found for employee id";
+			responseMsg.put("status", "FAILURE");
+        	responseMsg.put("message", "No performance appraisal was found for employee id");
 		}
 		else if (perfAppraisalDocList.size() != 1) {
 			System.out.println("ERROR: " +  perfAppraisalDocList.size() + " documents were returned");
-			responseMsg = "FAILURE|Multiple performance appraisals were found for employee id";
+			responseMsg.put("status", "FAILURE");
+        	responseMsg.put("message", "Multiple performance appraisals were found for employee id");
 		}
 		else { 
 			System.out.println("PA document returned: "+perfAppraisalDocList.get(0));
@@ -158,7 +178,7 @@ public class PerfAppraisalService {
 			Response response = pa_db.remove(perfAppraisalDoc);
 			System.out.println("response PA _id: "+ response.getId());
 			System.out.println("response _rev: "+ response.getRev());
-			responseMsg = "SUCCESS";
+			responseMsg.put("status", "SUCCESS");
     	}
 		return responseMsg;
     }

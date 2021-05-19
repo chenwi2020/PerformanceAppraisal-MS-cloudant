@@ -14,13 +14,13 @@ The application.properties file should have the following properties set:
 
 The following requests are supported where the id is the employee id:
 * `GET` /getPerfAppraisalByEmployeeId/{id}
-* `POST` /savePerfAppraisal
+* `POST` /createPerfAppraisal
 * `POST` /updatePerfAppraisal
 * `DELETE` /deletePerfAppraisalByEmployeeId/{id}
 
 ### Sample API requests
 
-Sample `savePerfAppraisal` request:
+Sample `createPerfAppraisal` request:
 ```
 {
     "empId": "a1b8f8bbdd733dd9afc5e2017aa39e53",
@@ -62,25 +62,63 @@ Sample responses for the `getPerfAppraisalByEmployeeId` request:
 }
 ```
 
-Sample responses for the `savePerfAppraisal` request:
+Sample responses for the `createPerfAppraisal` request:
 ```
-"SUCCESS"
-"FAILURE|Employee id was not provided in the request"
-"FALIURE|[exception message]"
-"FALIURE|Performance appraisal already exists for employee id"
+{
+    "status": "SUCCESS"
+}
+
+{
+    "message": "Employee id was not provided in the request",
+    "status": "FAILURE"
+}
+
+{
+    "message": [exception message],
+    "status": "FAILURE"
+}
+
+{
+    "message": "Performance appraisal already exists for employee id",
+    "status": "FAILURE"
+}
 ```
 
 Sample responses for the `updatePerfAppraisal` request:
 ```
-"SUCCESS"
-"FAILURE|Employee id was not provided in the request"
-"FAILURE|No performance appraisal was found for employee id"
-"FAILURE|Multiple performance appraisals were found for employee id"
+{
+    "status": "SUCCESS"
+}
+
+{
+    "message": "Employee id was not provided in the request",
+    "status": "FAILURE"
+}
+
+{
+    "message": "No performance appraisal was found for employee id",
+    "status": "FAILURE"
+}
+
+{
+    "message": "Multiple performance appraisals were found for employee id",
+    "status": "FAILURE"
+}
 ```
 
 Sample responses for the `deletePerfAppraisalByEmployeeId` request:
 ```
-"SUCCESS"
-"FAILURE|No performance appraisal was found for employee id"
-"FAILURE|Multiple performance appraisals were found for employee id"
+{
+    "status": "SUCCESS"
+}
+
+{
+    "message": "No performance appraisal was found for employee id",
+    "status": "FAILURE"
+}
+
+{
+    "message": "Multiple performance appraisals were found for employee id",
+    "status": "FAILURE"
+}
 ```

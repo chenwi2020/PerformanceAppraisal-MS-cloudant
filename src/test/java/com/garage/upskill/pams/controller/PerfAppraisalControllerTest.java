@@ -41,12 +41,12 @@ public class PerfAppraisalControllerTest {
 	@Test
     public void testGetPerfAppraisalByEmployeeId() throws Exception {
 		mockMvc.perform(get("/getPerfAppraisalByEmployeeId/1"))
-        .andExpect(status().isNotFound());
+        .andExpect(status().isBadRequest());
 	}
 
 	@Test
-    public void testSavePerfAppraisal() throws Exception {
-		mockMvc.perform(post("/savePerfAppraisal"))
+    public void testCreatePerfAppraisal() throws Exception {
+		mockMvc.perform(post("/createPerfAppraisal"))
         .andExpect(status().isBadRequest());
 	}
 	
@@ -59,8 +59,7 @@ public class PerfAppraisalControllerTest {
 	@Test
     public void testdeletePerfAppraisalByEmployeeId() throws Exception {
 		mockMvc.perform(delete("/deletePerfAppraisalByEmployeeId/1"))
-        .andExpect(status().isNotFound())
-		.andExpect(content().string("FAILURE|No performance appraisal was found for employee id"));
+        .andExpect(status().isBadRequest());
 	}
 
 }

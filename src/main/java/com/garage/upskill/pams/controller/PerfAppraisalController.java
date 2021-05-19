@@ -1,5 +1,7 @@
 package com.garage.upskill.pams.controller;
 
+import java.util.Map;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -25,36 +27,36 @@ public class PerfAppraisalController {
     @GetMapping("/getPerfAppraisalByEmployeeId/{id}")
     public ResponseEntity<PerfAppraisalDoc> getPerfAppraisalByEmployeeId(@PathVariable String id) {
 		PerfAppraisalDoc result = perfAppraisalService.getPerfAppraisalByEmployeeId(id);
-    	if ("Employee Id Not Available".equals(result.getEmpId()))
-    		return new ResponseEntity<PerfAppraisalDoc> (result, HttpStatus.OK);
+    	if ("No performance appraisal was found for employee id".equals(result.getEmpId()))
+    		return new ResponseEntity<PerfAppraisalDoc> (result, HttpStatus.BAD_REQUEST);
     	else
-    		return new ResponseEntity<PerfAppraisalDoc> (result, HttpStatus.NOT_FOUND);
+    		return new ResponseEntity<PerfAppraisalDoc> (result, HttpStatus.OK);
     }
     
-    @PostMapping("/savePerfAppraisal")
-    public ResponseEntity<String> savePerfAppraisal(@RequestBody PerfAppraisalDoc perfAppraisalDoc) {
-		String result = perfAppraisalService.savePerfAppraisal(perfAppraisalDoc);
-    	if ("SUCCESS".equals(result))
-    		return new ResponseEntity<String> (result, HttpStatus.OK);
+    @PostMapping("/createPerfAppraisal")
+    public ResponseEntity<Map<String, String>> createPerfAppraisal(@RequestBody PerfAppraisalDoc perfAppraisalDoc) {
+    	Map<String, String> result = perfAppraisalService.createPerfAppraisal(perfAppraisalDoc);
+    	if ("SUCCESS".equals(result.get("status")))
+    		return new ResponseEntity<Map<String, String>> (result, HttpStatus.OK);
     	else
-    		return new ResponseEntity<String> (result, HttpStatus.BAD_REQUEST);
+    		return new ResponseEntity<Map<String, String>> (result, HttpStatus.BAD_REQUEST);
     }
     
     @PostMapping("/updatePerfAppraisal")
-    public ResponseEntity<String> updatePerfAppraisal(@RequestBody PerfAppraisalDoc perfAppraisalDoc) {
-    	String result = perfAppraisalService.updatePerfAppraisal(perfAppraisalDoc);
-    	if ("SUCCESS".equals(result))
-    		return new ResponseEntity<String> (result, HttpStatus.OK);
+    public ResponseEntity<Map<String, String>> updatePerfAppraisal(@RequestBody PerfAppraisalDoc perfAppraisalDoc) {
+    	Map<String, String> result = perfAppraisalService.updatePerfAppraisal(perfAppraisalDoc);
+    	if ("SUCCESS".equals(result.get("status")))
+    		return new ResponseEntity<Map<String, String>> (result, HttpStatus.OK);
     	else
-    		return new ResponseEntity<String> (result, HttpStatus.BAD_REQUEST);
+    		return new ResponseEntity<Map<String, String>> (result, HttpStatus.BAD_REQUEST);
     }
     
     @DeleteMapping("/deletePerfAppraisalByEmployeeId/{id}")
-    public ResponseEntity<String> deletePerfAppraisalByEmployeeId(@PathVariable String id) {
-    	String result = perfAppraisalService.deletePerfAppraisalByEmployeeId(id);
-    	if ("SUCCESS".equals(result))
-    		return new ResponseEntity<String> (result, HttpStatus.OK);
+    public ResponseEntity<Map<String, String>> deletePerfAppraisalByEmployeeId(@PathVariable String id) {
+    	Map<String, String> result = perfAppraisalService.deletePerfAppraisalByEmployeeId(id);
+    	if ("SUCCESS".equals(result.get("status")))
+    		return new ResponseEntity<Map<String, String>> (result, HttpStatus.OK);
     	else
-    		return new ResponseEntity<String> (result, HttpStatus.NOT_FOUND);
+    		return new ResponseEntity<Map<String, String>> (result, HttpStatus.BAD_REQUEST);
     }
 }
